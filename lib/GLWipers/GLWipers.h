@@ -7,6 +7,7 @@ public:
     int getCurrentMode();
     void setMode(int remoteMode, int remotePause);
     void setTaskForOneWipe();
+    void setWasherRemoteState(boolean state);
 
 private:
     enum Wiper_modes
@@ -42,7 +43,9 @@ private:
     int _secondModePause = 0;
     int _thirdModePause = 0;
     boolean _lastWasherState = 0;
+    boolean _lastWasherRemoteState = 0;
     boolean _currentWasherState = 0;
+    boolean _currentWasherRemoteState = 0;
     unsigned long _timeOfWasherStarted = 0;
 
     boolean isTimePassed(unsigned long startedAt, int timeInterval);
@@ -61,4 +64,6 @@ private:
     boolean getWasherButtonState();
     void enableWasher();
     void disableWasher();
+    void washerEnablerDisabler(boolean state);
+    boolean getWasherRemoteState();
 };

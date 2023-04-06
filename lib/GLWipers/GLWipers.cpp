@@ -46,22 +46,21 @@ void GLWipers::loop()
     oneWipeLoop();
     washerLoop();
 }
+
 boolean GLWipers::washerLoop()
 {
     boolean changed = 0;
     boolean washerState = getWasherButtonState();
+    boolean washerStateRemote = getWasherRemoteState();
     if (_lastWasherState != washerState)
     {
         changed = 1;
-        if (washerState)
-        {
-            enableWasher();
-            _timeOfWasherStarted = millis();
-        }
-        else
-        {
-            disableWasher();
-        }
+        washerEnablerDisabler(washerState);
+    }
+    else if(_lastWasherRemoteState != washerStateRemote)
+    {
+        changed = 1;
+        washerEnablerDisabler(washerStateRemote);
     }
     else
     {
@@ -72,6 +71,12 @@ boolean GLWipers::washerLoop()
         }
     }
     return changed;
+}
+boolean GLWipers::getWasherRemoteState(){
+    return _currentWasherRemoteState;
+}
+void GLWipers::setWasherRemoteState(boolean state){
+    _currentWasherRemoteState=state;
 }
 boolean GLWipers::getWasherButtonState()
 {
@@ -85,6 +90,18 @@ void GLWipers::enableWasher()
 void GLWipers::disableWasher()
 {
     digitalWrite(_washerRelayOutPin, LOW);
+}
+void GLWipers::washerEnablerDisabler(boolean state){
+    if (state)
+        {
+            enableWasher();
+            _timeOfWasherStarted = millis();
+        }
+        else
+        {
+            disableWasher();
+        }
+
 }
 void GLWipers::setTimerForNextWipes()
 {

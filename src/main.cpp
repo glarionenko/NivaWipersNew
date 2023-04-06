@@ -13,9 +13,6 @@ GLWipers wipers;
 
 void setup() {
   wipers.init(wipersInPin, washerInPin, wipersRelayOutPin, washerRelayOutPin, maxWashingTime, secondModePause, thirdModePause);
-#ifdef DEBUG
-  Serial.begin(9600);
-#endif
 }
 
 void loop() {
