@@ -21,5 +21,6 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   wipers.loop();
+  //Проверить, возможно при включении режима первый взмах делается не сразу, а по таймеру режима
   
 }
