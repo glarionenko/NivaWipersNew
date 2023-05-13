@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "GLWipers.h"
 
-const int wipersRelayOutPin = 2;
+const int wipersRelayOutPin = 4;
 const int washerRelayOutPin = 3;
 const int wipersInPin = A0;
 const int washerInPin = A1;
