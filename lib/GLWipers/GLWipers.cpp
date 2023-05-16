@@ -1,5 +1,5 @@
 #include "GLWipers.h"
-
+//glarionenko@gmail.com
 void GLWipers::init(int wipersInPin, int washerInPin, int wipersRelayOutPin, int washerRelayOutPin, int maxWashingTime, int secondModePause, int thirdModePause)
 {
     _secondModePause = secondModePause;
