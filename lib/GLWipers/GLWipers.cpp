@@ -1,10 +1,7 @@
 #include "GLWipers.h"
 
 //glarionenko@gmail.com
-void GLWipers::init(int wipersInPin, int washerInPin, int wipersRelayOutPin, int washerRelayOutPin, int maxWashingTime, int secondModePause, int thirdModePause)
-
 void GLWipers::init(int wipersInPin, int washerInPin, int wipersRelayOutPin, int washerRelayOutPin, int maxWashingTime, int thirdModePause)
->>>>>>> Stashed changes
 {
     _thirdModePause = thirdModePause;
     _wipersInPin = wipersInPin;
