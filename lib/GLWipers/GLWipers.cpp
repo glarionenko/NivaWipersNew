@@ -119,7 +119,7 @@ void GLWipers::stopWiping()
 boolean GLWipers::isTimePassed(unsigned long startedAt, int timeInterval)
 {
     boolean passed = 0;
-    if ((millis() - startedAt) >= timeInterval)
+    if ((millis() - startedAt) >= (unsigned int)timeInterval)
     {
         passed = 1;
     }
