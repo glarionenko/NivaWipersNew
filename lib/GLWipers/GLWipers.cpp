@@ -1,8 +1,11 @@
 #include "GLWipers.h"
+
 //glarionenko@gmail.com
 void GLWipers::init(int wipersInPin, int washerInPin, int wipersRelayOutPin, int washerRelayOutPin, int maxWashingTime, int secondModePause, int thirdModePause)
+
+void GLWipers::init(int wipersInPin, int washerInPin, int wipersRelayOutPin, int washerRelayOutPin, int maxWashingTime, int thirdModePause)
+>>>>>>> Stashed changes
 {
-    _secondModePause = secondModePause;
     _thirdModePause = thirdModePause;
     _wipersInPin = wipersInPin;
     _washerInPin = washerInPin;
@@ -14,7 +17,7 @@ void GLWipers::init(int wipersInPin, int washerInPin, int wipersRelayOutPin, int
     pinMode(_wipersRelayOutPin, OUTPUT);
     pinMode(_washerRelayOutPin, OUTPUT);
     _lastMode = getSelectedMode();
-    _wipersPulseSizeMillis = 1000;
+    _wipersPulseSizeMillis = 500;
 }
 
 void GLWipers::loop()
@@ -47,30 +50,24 @@ void GLWipers::loop()
     washerLoop();
 }
 
-boolean GLWipers::washerLoop()
+void GLWipers::washerLoop()
 {
-    boolean changed = 0;
     boolean washerState = getWasherButtonState();
     boolean washerStateRemote = getWasherRemoteState();
     if (_lastWasherState != washerState)
     {
-        changed = 1;
+        Serial.println("Washer state changed");
         washerEnablerDisabler(washerState);
-    }
-    else if(_lastWasherRemoteState != washerStateRemote)
+        _lastWasherState=washerState;
+    }else if(_lastWasherRemoteState != washerStateRemote)
     {
-        changed = 1;
         washerEnablerDisabler(washerStateRemote);
-    }
-    else
-    {
-        changed = 0;
+    }else{
         if (washerState && isTimePassed(_timeOfWasherStarted, _maxWashingTime))
         {
             disableWasher();
         }
     }
-    return changed;
 }
 boolean GLWipers::getWasherRemoteState(){
     return _currentWasherRemoteState;
@@ -80,7 +77,7 @@ void GLWipers::setWasherRemoteState(boolean state){
 }
 boolean GLWipers::getWasherButtonState()
 {
-    boolean state = digitalRead(_washerInPin);
+    boolean state = analogRead(_washerInPin)>200?0:1;
     return state;
 }
 void GLWipers::enableWasher()
@@ -92,16 +89,12 @@ void GLWipers::disableWasher()
     digitalWrite(_washerRelayOutPin, LOW);
 }
 void GLWipers::washerEnablerDisabler(boolean state){
-    if (state)
-        {
+    if (state){
             enableWasher();
             _timeOfWasherStarted = millis();
-        }
-        else
-        {
+        }else{
             disableWasher();
         }
-
 }
 void GLWipers::setTimerForNextWipes()
 {

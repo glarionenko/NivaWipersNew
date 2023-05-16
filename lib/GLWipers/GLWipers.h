@@ -2,7 +2,7 @@
 class GLWipers
 {
 public:
-    void init(int wipersInPin, int washerInPin, int wipersRelayOutPin, int washerRelayOutPin, int maxWashingTime, int secondModePause, int thirdModePause);
+    void init(int wipersInPin, int washerInPin, int wipersRelayOutPin, int washerRelayOutPin, int maxWashingTime, int thirdModePause);
     void loop();
     int getCurrentMode();
     void setMode(int remoteMode, int remotePause);
@@ -18,7 +18,7 @@ private:
         WIPERS_CONTINUOUS_MODE = 4 // without pauses
     };
     unsigned long _timeOfOneWipeStarted = 0;
-    int _maxWashingTime = 0;
+    int _maxWashingTime = 5000;
     int _washerRelayOutPin = 0;
     int _wipersRelayOutPin = 0;
     int _wipersInPin = 0;
@@ -40,7 +40,6 @@ private:
     int _currentRemotePause = 0;
     boolean _remoteEnabled=0;
     boolean _forcedRemote=0;
-    int _secondModePause = 0;
     int _thirdModePause = 0;
     boolean _lastWasherState = 0;
     boolean _lastWasherRemoteState = 0;
@@ -60,7 +59,7 @@ private:
     void stopTimerForNextWipes();
     void continuousWipingStart();
     void stopWiping();
-    boolean washerLoop();
+    void washerLoop();
     boolean getWasherButtonState();
     void enableWasher();
     void disableWasher();
