@@ -1,6 +1,6 @@
 #include "GLWipers.h"
 
-//glarionenko@gmail.com
+// glarionenko@gmail.com
 void GLWipers::init(int wipersInPin, int washerInPin, int wipersRelayOutPin, int washerRelayOutPin, int maxWashingTime, int thirdModePause)
 {
     _thirdModePause = thirdModePause;
@@ -41,7 +41,6 @@ void GLWipers::loop()
         }
     }
 
-    // continuous wiper task check
     multipleWipesLoop();
     oneWipeLoop();
     washerLoop();
@@ -55,26 +54,31 @@ void GLWipers::washerLoop()
     {
         Serial.println("Washer state changed");
         washerEnablerDisabler(washerState);
-        _lastWasherState=washerState;
-    }else if(_lastWasherRemoteState != washerStateRemote)
+        _lastWasherState = washerState;
+    }
+    else if (_lastWasherRemoteState != washerStateRemote)
     {
         washerEnablerDisabler(washerStateRemote);
-    }else{
+    }
+    else
+    {
         if (washerState && isTimePassed(_timeOfWasherStarted, _maxWashingTime))
         {
             disableWasher();
         }
     }
 }
-boolean GLWipers::getWasherRemoteState(){
+boolean GLWipers::getWasherRemoteState()
+{
     return _currentWasherRemoteState;
 }
-void GLWipers::setWasherRemoteState(boolean state){
-    _currentWasherRemoteState=state;
+void GLWipers::setWasherRemoteState(boolean state)
+{
+    _currentWasherRemoteState = state;
 }
 boolean GLWipers::getWasherButtonState()
 {
-    boolean state = analogRead(_washerInPin)>200?0:1;
+    boolean state = analogRead(_washerInPin) > 200 ? 0 : 1;
     return state;
 }
 void GLWipers::enableWasher()
@@ -85,13 +89,17 @@ void GLWipers::disableWasher()
 {
     digitalWrite(_washerRelayOutPin, LOW);
 }
-void GLWipers::washerEnablerDisabler(boolean state){
-    if (state){
-            enableWasher();
-            _timeOfWasherStarted = millis();
-        }else{
-            disableWasher();
-        }
+void GLWipers::washerEnablerDisabler(boolean state)
+{
+    if (state)
+    {
+        enableWasher();
+        _timeOfWasherStarted = millis();
+    }
+    else
+    {
+        disableWasher();
+    }
 }
 void GLWipers::setTimerForNextWipes()
 {
@@ -114,6 +122,7 @@ void GLWipers::continuousWipingStart()
 void GLWipers::stopWiping()
 {
     wipersEnablerDisabler(false);
+    
 }
 
 boolean GLWipers::isTimePassed(unsigned long startedAt, int timeInterval)
@@ -163,9 +172,10 @@ void GLWipers::oneWipeLoop()
 }
 void GLWipers::setMode(int remoteMode, int remotePause)
 {
-    if(_remoteEnabled){
-    _currentRemoteMode = remoteMode;
-    _currentRemotePause = remotePause;
+    if (_remoteEnabled)
+    {
+        _currentRemoteMode = remoteMode;
+        _currentRemotePause = remotePause;
     }
 }
 boolean GLWipers::isStateChangedAndSetWipersMode()
@@ -177,12 +187,18 @@ boolean GLWipers::isStateChangedAndSetWipersMode()
 
     if (_lastMode != mode)
     {
+        //check here
+        _oneWipeStopTask=0;
+        stopTimerForNextWipes();
         wipersSetMode(mode);
         _lastMode = mode;
         changed = 1;
     }
     else if (_lastRemoteMode != settedRemotelyMode)
     {
+        //and here
+        _oneWipeStopTask=0;
+        stopTimerForNextWipes();
         wipersSetModeRemote(settedRemotelyMode, settedRemotelyPause);
         _lastRemoteMode = settedRemotelyMode;
         changed = 1;
@@ -198,26 +214,36 @@ int GLWipers::getSelectedMode()
 {
     int selectorMode = analogRead(_wipersInPin);
     int mode = WIPERS_STOP_MODE;
-    if (selectorMode > 1000)
+    if (getWasherButtonState() == 0)
     {
-        mode = WIPERS_STOP_MODE;
-        return mode;
+
+        if (selectorMode > 1000)
+        {
+            mode = WIPERS_STOP_MODE;
+            return mode;
+        }
+        if (selectorMode > 25 && selectorMode <= 40)
+        {
+            mode = WIPERS_AUTO_MODE;
+            return mode;
+        }
+        if (selectorMode > 20 && selectorMode <= 25)
+        {
+            mode = WIPERS_SECOND_MODE;
+            return mode;
+        }
+        if (selectorMode > 10 && selectorMode <= 20)
+        {
+            mode = WIPERS_CONTINUOUS_MODE;
+            return mode;
+        }
     }
-    if (selectorMode > 25 && selectorMode <= 40)
-    {
-        mode = WIPERS_AUTO_MODE;
-        return mode;
-    }
-    if (selectorMode > 20 && selectorMode <= 25)
-    {
-        mode = WIPERS_SECOND_MODE;
-        return mode;
-    }
-    if (selectorMode > 10 && selectorMode <= 20)
+    else
     {
         mode = WIPERS_CONTINUOUS_MODE;
         return mode;
     }
+
     return mode;
 }
 
@@ -265,26 +291,26 @@ void GLWipers::wipersSetMode(int mode)
     {
     case WIPERS_STOP_MODE:
         _isWipersEnabled = 0;
-        _remoteEnabled=0;
+        _remoteEnabled = 0;
         break;
     case WIPERS_AUTO_MODE:
         _isWipersEnabled = 0;
         _currentPause = 0;
-        _remoteEnabled=1;
+        _remoteEnabled = 1;
         break;
     case WIPERS_SECOND_MODE:
         _isWipersEnabled = 1;
         _currentPause = _thirdModePause;
-        _remoteEnabled=0;
+        _remoteEnabled = 0;
         break;
     case WIPERS_CONTINUOUS_MODE:
         _isWipersEnabled = 1;
         _currentPause = 0;
-        _remoteEnabled=0;
+        _remoteEnabled = 0;
         break;
     default:
         _isWipersEnabled = 0;
-        _remoteEnabled=0;
+        _remoteEnabled = 0;
         break;
     }
 }
